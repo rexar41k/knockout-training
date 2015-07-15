@@ -73,7 +73,7 @@
 </head>
 <body>
 <ul class="month" >
-    <li><a id="prev" href="#prev" data-bind="click: dates.getMonth();"><=</a></li>
+    <li><a id="prev" href="#prev"><=</a></li>
     <li>Сентябрь</li>
     <li><a href="#next">=></a></li>
 </ul>
@@ -151,18 +151,19 @@ $(document).ready(function () {
 
     var Date = function(date, tasks) {
         var self = this;
-        this.date = date;
-        this.tasks = ko.observableArray([]);
+
+        self.date = date;
+        self.tasks = ko.observableArray([]);
         self.newTaskText = ko.observable();
         self.newTaskStartTime = ko.observable();
         self.newTaskEndTime = ko.observable();
      
-        this.addTask = function() {
-            if(this.newTaskText() === undefined || this.newTaskText() === "") return;
+        self.addTask = function() {
+            if(self.newTaskText() === undefined || self.newTaskText() === "") return;
             self.tasks.push(new Task({
-                title: this.newTaskText(),
-                time: this.newTaskStartTime(),
-                endTime: this.newTaskEndTime() }));
+                title: self.newTaskText(),
+                time: self.newTaskStartTime(),
+                endTime: self.newTaskEndTime() }));
             self.newTaskText("");
         }.bind(this);
 
