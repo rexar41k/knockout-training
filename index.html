@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knockout JS - calendar</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        .days {
+            border: 1px solid black;
+            width: 230px;
+            height: 100px;
+            padding: 5px;
+        }
+        .day{
+            float: left;
+            width: 14%;
+            height: 100px;
+            border:1px solid black;
+        }
+        .b-popup{
+            overflow:hidden;
+            position: fixed;
+            left: 40%;
+            top: 15%;
+            z-index: 200;
+        }
+        .b-popup .b-popup-content{
+            margin:40px auto 0 auto;
+            width:150px;
+            height: 110px;
+            padding:10px;
+            background-color: #c5c5c5;
+            border-radius:5px;
+            box-shadow: 0 0 10px #000;
+        }
+        ul {
+            padding: 0;
+            margin-left: 5px;
+           }
+        li {
+            list-style-type: none;
+        }
+        ul.month > li {
+            display: inline;
+            font-weight: bold;
+            font-size: 20px;
+           }
+        .overlay {
+            position: fixed;
+            width: 100%;
+            opacity: 0.5;
+            top: 0px;
+            margin: 0px;
+            min-height: 200px;
+            height: 100%;
+            background-color: #000;
+        }
+        .calendar {
+            width: 100%;
+            float: left;
+        }
+        .week {
+            height: 20px;
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<ul class="month" >
+    <li><a id="prev" href="#prev" data-bind="click: dates.getMonth();"><=</a></li>
+    <li>Сентябрь</li>
+    <li><a href="#next">=></a></li>
+</ul>
+
+<div id="calendar">
+<div class="overlay"></div>
+
+<div>
+    <div class="day week">Понедельник</div>
+    <div class="day week">Вторник</div>
+    <div class="day week">Среда</div>
+    <div class="day week">Четверг</div>
+    <div class="day week">Пятница</div>
+    <div class="day week">Суббота</div>
+    <div class="day week">Воскресенье</div>
+</div>
+
+<div id="month-1" data-bind="foreach:dates.september;">
+<div class="day">
+            <a href="#" class="show_popap"><span data-bind="text: date"></span></a>
+            <div class="b-popup">
+    <div class="b-popup-content">
+            <form data-bind="submit: addTask">
+                Добавить задачу: <input data-bind="value: newTaskText" placeholder="Что будем делать?" /><br>
+                Начало в: <select data-bind="value: newTaskStartTime">
+                            <option>9:00</option>
+                            <option>10:00</option>
+                            <option>11:00</option>
+                            <option>12:00</option>
+                            <option>13:00</option>
+                            <option>14:00</option>
+                            <option>15:00</option>
+                            <option>16:00</option>
+                            <option>17:00</option>
+                            <option>18:00</option>
+                            <option>19:00</option>
+                        </select><br>
+                Конец в: <select data-bind="value: newTaskEndTime">
+                            <option>10:00</option>
+                            <option>11:00</option>
+                            <option>12:00</option>
+                            <option>13:00</option>
+                            <option>14:00</option>
+                            <option>15:00</option>
+                            <option>16:00</option>
+                            <option>17:00</option>
+                            <option>18:00</option>
+                            <option>19:00</option>
+                            <option>20:00</option>
+                        </select><br>
+                <button type="submit">Добавить</button>
+            </form>
+            <a href="#" class="close">Закрыть окно</a>
+    </div>
+    </div>
+        <ul data-bind="foreach: tasks" class="tasks">
+            <li>
+                <span data-bind="text: time"></span>
+                <span data-bind="text: title"></span>
+                <a href="#" data-bind="click: $parent.removeTask">X</a>
+            </li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+    function Task(data) {
+        this.title = ko.observable(data.title);
+        this.time = ko.observable(data.time);
+        this.endTime = ko.observable(data.endTime);
+    }
+
+    var Date = function(date, tasks) {
+        var self = this;
+        this.date = date;
+        this.tasks = ko.observableArray([]);
+        self.newTaskText = ko.observable();
+        self.newTaskStartTime = ko.observable();
+        self.newTaskEndTime = ko.observable();
+     
+        this.addTask = function() {
+            if(this.newTaskText() === undefined || this.newTaskText() === "") return;
+            self.tasks.push(new Task({
+                title: this.newTaskText(),
+                time: this.newTaskStartTime(),
+                endTime: this.newTaskEndTime() }));
+            self.newTaskText("");
+        }.bind(this);
+
+        self.removeTask = function(task) {
+            if (confirm('Delete ' + task.title() + '?')) self.tasks.remove(task);
+        };
+    };
+
+    var viewModel = {
+        dates: {
+            getMonth: function () {
+                return this.september;
+            },
+            september: [
+                new Date("1 сентября"),
+                new Date("2 сентября"),
+                new Date("3 сентября"),
+                new Date("4 сентября"),
+                new Date("5 сентября"),
+                new Date("6 сентября"),
+                new Date("7 сентября"),
+                new Date("8 сентября"),
+                new Date("9 сентября"),
+                new Date("10 сентября"),
+                new Date("11 сентября"),
+                new Date("12 сентября"),
+                new Date("13 сентября"),
+                new Date("14 сентября"),
+                new Date("15 сентября"),
+                new Date("16 сентября"),
+                new Date("17 сентября"),
+                new Date("18 сентября"),
+                new Date("19 сентября"),
+                new Date("20 сентября"),
+                new Date("21 сентября"),
+                new Date("22 сентября"),
+                new Date("23 сентября"),
+                new Date("24 сентября"),
+                new Date("25 сентября"),
+                new Date("26 сентября"),
+                new Date("27 сентября"),
+                new Date("28 сентября"),
+                new Date("29 сентября"),
+                new Date("30 сентября")],
+            october: [
+                new Date("1 октября"),
+                new Date("2 октября"),
+                new Date("3 октября"),
+                new Date("4 октября"),
+                new Date("5 октября"),
+                new Date("6 октября"),
+                new Date("7 октября"),
+                new Date("8 октября"),
+                new Date("9 октября"),
+                new Date("10 октября"),
+                new Date("11 октября"),
+                new Date("12 октября"),
+                new Date("13 октября"),
+                new Date("14 октября"),
+                new Date("15 октября"),
+                new Date("16 октября"),
+                new Date("17 октября"),
+                new Date("18 октября"),
+                new Date("19 октября"),
+                new Date("20 октября"),
+                new Date("21 октября"),
+                new Date("22 октября"),
+                new Date("23 октября"),
+                new Date("24 октября"),
+                new Date("25 октября"),
+                new Date("26 октября"),
+                new Date("27 октября"),
+                new Date("28 октября"),
+                new Date("29 октября"),
+                new Date("30 октября")],
+        }
+    };
+
+    ko.applyBindings(viewModel);
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+    $('.day').find('.b-popup').hide();
+    $('.overlay').hide();
+    
+    $('.close').click(function () {
+        $(this).parent().parent().parent().find('.b-popup').hide();
+        $('.overlay').hide();
+    });
+    
+    $('.show_popap').click(function () {
+        $(this).parent().find('.b-popup').show();
+        $('.overlay').show();
+    });
+
+    $('#prev').click(function () {
+        $('#month-1').attr('data-bind', 'foreach:dates.october');
+    });
+})
+</script>
+
+</body>
+</html>
