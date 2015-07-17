@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Knockout JS - calendar</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
-    <script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
     <style type="text/css">
         * {
             padding: 0;
@@ -91,7 +90,7 @@
     <div class="day week">Воскресенье</div>
 </div>
 
-<div id="month-1" data-bind="foreach:dates.september;">
+<div id="month-1" data-bind="foreach:september;">
 <div class="day">
             <a href="#" class="show_popap"><span data-bind="text: date"></span></a>
             <div class="b-popup">
@@ -141,7 +140,7 @@
 </div>
 
 <script type="text/javascript">
-$(document).ready(function () {
+document.addEventListener("DOMContentLoaded", function(event) {
 
     function Task(data) {
         this.title = ko.observable(data.title);
@@ -173,96 +172,44 @@ $(document).ready(function () {
     };
 
     var viewModel = {
-        dates: {
-            getMonth: function () {
-                return this.september;
-            },
-            september: [
-                new Date("1 сентября"),
-                new Date("2 сентября"),
-                new Date("3 сентября"),
-                new Date("4 сентября"),
-                new Date("5 сентября"),
-                new Date("6 сентября"),
-                new Date("7 сентября"),
-                new Date("8 сентября"),
-                new Date("9 сентября"),
-                new Date("10 сентября"),
-                new Date("11 сентября"),
-                new Date("12 сентября"),
-                new Date("13 сентября"),
-                new Date("14 сентября"),
-                new Date("15 сентября"),
-                new Date("16 сентября"),
-                new Date("17 сентября"),
-                new Date("18 сентября"),
-                new Date("19 сентября"),
-                new Date("20 сентября"),
-                new Date("21 сентября"),
-                new Date("22 сентября"),
-                new Date("23 сентября"),
-                new Date("24 сентября"),
-                new Date("25 сентября"),
-                new Date("26 сентября"),
-                new Date("27 сентября"),
-                new Date("28 сентября"),
-                new Date("29 сентября"),
-                new Date("30 сентября")],
-            october: [
-                new Date("1 октября"),
-                new Date("2 октября"),
-                new Date("3 октября"),
-                new Date("4 октября"),
-                new Date("5 октября"),
-                new Date("6 октября"),
-                new Date("7 октября"),
-                new Date("8 октября"),
-                new Date("9 октября"),
-                new Date("10 октября"),
-                new Date("11 октября"),
-                new Date("12 октября"),
-                new Date("13 октября"),
-                new Date("14 октября"),
-                new Date("15 октября"),
-                new Date("16 октября"),
-                new Date("17 октября"),
-                new Date("18 октября"),
-                new Date("19 октября"),
-                new Date("20 октября"),
-                new Date("21 октября"),
-                new Date("22 октября"),
-                new Date("23 октября"),
-                new Date("24 октября"),
-                new Date("25 октября"),
-                new Date("26 октября"),
-                new Date("27 октября"),
-                new Date("28 октября"),
-                new Date("29 октября"),
-                new Date("30 октября")],
-        }
+            september: [],
+            generateMonth: function (month, days) {
+                for (var i = 0; i < days; i++) {
+                    month.push(new Date(i + 1));
+                };
+            }
     };
 
+    viewModel.generateMonth(viewModel.september, 30);
     ko.applyBindings(viewModel);
 });
 </script>
 <script type="text/javascript">
-$(document).ready(function () {
-    $('.day').find('.b-popup').hide();
-    $('.overlay').hide();
-    
-    $('.close').click(function () {
-        $(this).parent().parent().parent().find('.b-popup').hide();
-        $('.overlay').hide();
-    });
-    
-    $('.show_popap').click(function () {
-        $(this).parent().find('.b-popup').show();
-        $('.overlay').show();
-    });
+document.addEventListener("DOMContentLoaded", function(event) {
+  var popup = document.querySelectorAll('div.b-popup');
+  var overlay = document.querySelector('div.overlay');
 
-    $('#prev').click(function () {
-        $('#month-1').attr('data-bind', 'foreach:dates.october');
-    });
+  for (var i = 0; i < popup.length; i++) {
+      popup[i].style.display = 'none';
+  };
+
+  overlay.style.display = 'none';
+    
+  var close = document.getElementsByClassName('close');
+  for (var i = 0; i < close.length; i++) {
+      close[i].addEventListener("click", function(){
+          this.parentElement.style.display = 'none';
+          overlay.style.display = 'none';
+      });
+  };
+
+  var showpopup = document.getElementsByClassName('show_popap');
+  for (var i = 0; i < showpopup.length; i++) {
+      showpopup[i].addEventListener("click", function(){
+          this.nextElementSibling.style.display = 'block';
+          overlay.style.display = 'block';
+      });
+  };
 })
 </script>
 
