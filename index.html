@@ -92,7 +92,7 @@
 <div id="month-1" data-bind="foreach:september;">
 <div class="overlay" data-bind="visible: visible()"></div>
 <div class="day">
-            <a href="#" class="show_popap" data-bind="click: $parent.openPopap"><span data-bind="text: date"></span></a>
+            <a href="#" class="show_popap" data-bind="click: openPopap"><span data-bind="text: date"></span></a>
             <div class="b-popup" data-bind="visible: visible()">
     <div class="b-popup-content">
             <form data-bind="submit: addTask">
@@ -125,7 +125,7 @@
                         </select><br>
                 <button type="submit">Добавить</button>
             </form>
-            <a href="#" class="close" data-bind="click: $parent.closePopap">Закрыть окно</a>
+            <a href="#" class="close" data-bind="click: closePopap">Закрыть окно</a>
     </div>
     </div>
         <ul data-bind="foreach: tasks" class="tasks">
@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         this.endTime = ko.observable(data.endTime);
     }
 
-    var Date = function(date, tasks) {
+    var Date = function(date) {
         var self = this;
 
         self.date = date;
@@ -171,6 +171,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
         };
 
         self.visible = ko.observable(false);
+
+        self.openPopap = function (item) {
+            item.visible(true);
+        }
+
+        self.closePopap = function (item) {
+            item.visible(false);
+        }
     };
 
     var viewModel = {
@@ -179,12 +187,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
               for (var i = 0; i < days; i++) {
                   monthArr.push(new Date(i + 1));
               };
-            },
-            openPopap: function (item) {
-              item.visible(true);
-            },
-            closePopap: function (item) {
-              item.visible(false);
             }
     };
 
