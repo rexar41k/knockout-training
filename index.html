@@ -78,7 +78,6 @@
 </ul>
 
 <div id="calendar">
-<div class="overlay"></div>
 
 <div>
     <div class="day week">Понедельник</div>
@@ -91,9 +90,10 @@
 </div>
 
 <div id="month-1" data-bind="foreach:september;">
+<div class="overlay" data-bind="visible: visible()"></div>
 <div class="day">
             <a href="#" class="show_popap" data-bind="click: $parent.openPopap"><span data-bind="text: date"></span></a>
-            <div class="b-popup">
+            <div class="b-popup" data-bind="visible: visible()">
     <div class="b-popup-content">
             <form data-bind="submit: addTask">
                 Добавить задачу: <input data-bind="value: newTaskText" placeholder="Что будем делать?" /><br>
@@ -169,28 +169,22 @@ document.addEventListener("DOMContentLoaded", function(event) {
         self.removeTask = function(task) {
             if (confirm('Delete ' + task.title() + '?')) self.tasks.remove(task);
         };
+
+        self.visible = ko.observable(false);
     };
 
     var viewModel = {
             september: [],
-            generateMonth: function (month, days) {
-              document.querySelector('div.overlay').style.display = 'none';
-              var popup = document.querySelectorAll('div.b-popup');
-              for (var i = 0; i < popup.length; i++) {
-                  popup[i].style.display = 'none';
-              };
-
+            generateMonth: function (monthArr, days) {
               for (var i = 0; i < days; i++) {
-                  month.push(new Date(i + 1));
+                  monthArr.push(new Date(i + 1));
               };
             },
-            openPopap: function (item, event) {
-              event.target.parentElement.nextElementSibling.style.display = 'block';
-              document.querySelector('div.overlay').style.display = 'block';
+            openPopap: function (item) {
+              item.visible(true);
             },
-            closePopap: function (item, event) {
-              event.target.parentElement.parentElement.style.display = 'none';
-              document.querySelector('div.overlay').style.display = 'none';
+            closePopap: function (item) {
+              item.visible(false);
             }
     };
 
