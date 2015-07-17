@@ -92,7 +92,7 @@
 
 <div id="month-1" data-bind="foreach:september;">
 <div class="day">
-            <a href="#" class="show_popap"><span data-bind="text: date"></span></a>
+            <a href="#" class="show_popap" data-bind="click: $parent.openPopap"><span data-bind="text: date"></span></a>
             <div class="b-popup">
     <div class="b-popup-content">
             <form data-bind="submit: addTask">
@@ -125,7 +125,7 @@
                         </select><br>
                 <button type="submit">Добавить</button>
             </form>
-            <a href="#" class="close">Закрыть окно</a>
+            <a href="#" class="close" data-bind="click: $parent.closePopap">Закрыть окно</a>
     </div>
     </div>
         <ul data-bind="foreach: tasks" class="tasks">
@@ -174,9 +174,23 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var viewModel = {
             september: [],
             generateMonth: function (month, days) {
-                for (var i = 0; i < days; i++) {
-                    month.push(new Date(i + 1));
-                };
+              document.querySelector('div.overlay').style.display = 'none';
+              var popup = document.querySelectorAll('div.b-popup');
+              for (var i = 0; i < popup.length; i++) {
+                  popup[i].style.display = 'none';
+              };
+
+              for (var i = 0; i < days; i++) {
+                  month.push(new Date(i + 1));
+              };
+            },
+            openPopap: function (item, event) {
+              event.target.parentElement.nextElementSibling.style.display = 'block';
+              document.querySelector('div.overlay').style.display = 'block';
+            },
+            closePopap: function (item, event) {
+              event.target.parentElement.parentElement.style.display = 'none';
+              document.querySelector('div.overlay').style.display = 'none';
             }
     };
 
@@ -184,34 +198,5 @@ document.addEventListener("DOMContentLoaded", function(event) {
     ko.applyBindings(viewModel);
 });
 </script>
-<script type="text/javascript">
-document.addEventListener("DOMContentLoaded", function(event) {
-  var popup = document.querySelectorAll('div.b-popup');
-  var overlay = document.querySelector('div.overlay');
-
-  for (var i = 0; i < popup.length; i++) {
-      popup[i].style.display = 'none';
-  };
-
-  overlay.style.display = 'none';
-    
-  var close = document.getElementsByClassName('close');
-  for (var i = 0; i < close.length; i++) {
-      close[i].addEventListener("click", function(){
-          this.parentElement.style.display = 'none';
-          overlay.style.display = 'none';
-      });
-  };
-
-  var showpopup = document.getElementsByClassName('show_popap');
-  for (var i = 0; i < showpopup.length; i++) {
-      showpopup[i].addEventListener("click", function(){
-          this.nextElementSibling.style.display = 'block';
-          overlay.style.display = 'block';
-      });
-  };
-})
-</script>
-
 </body>
 </html>
