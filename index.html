@@ -89,11 +89,9 @@
     <div class="day week">Воскресенье</div>
 </div>
 
-<div id="month-1" data-bind="foreach:september;">
 <div class="overlay" data-bind="visible: visible()"></div>
-<div class="day">
-            <a href="#" class="show_popap" data-bind="click: openPopap"><span data-bind="text: date"></span></a>
-            <div class="b-popup" data-bind="visible: visible()">
+
+<div class="b-popup" data-bind="visible: visible()">
     <div class="b-popup-content">
             <form data-bind="submit: addTask">
                 Добавить задачу: <input data-bind="value: newTaskText" placeholder="Что будем делать?" /><br>
@@ -127,7 +125,13 @@
             </form>
             <a href="#" class="close" data-bind="click: closePopap">Закрыть окно</a>
     </div>
-    </div>
+</div>
+
+<div id="month-1" data-bind="foreach:september;">
+<div class="day">
+            <a href="#" class="show_popap" data-bind="click: $parent.openPopap">
+                <span data-bind="text: $data.date"></span>
+            </a>
         <ul data-bind="foreach: tasks" class="tasks">
             <li>
                 <span data-bind="text: time"></span>
@@ -153,45 +157,52 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         self.date = date;
         self.tasks = ko.observableArray([]);
-        self.newTaskText = ko.observable();
-        self.newTaskStartTime = ko.observable();
-        self.newTaskEndTime = ko.observable();
-     
-        self.addTask = function() {
-            if(self.newTaskText() === undefined || self.newTaskText() === "") return;
-            self.tasks.push(new Task({
-                title: self.newTaskText(),
-                time: self.newTaskStartTime(),
-                endTime: self.newTaskEndTime() }));
-            self.newTaskText("");
-        }.bind(this);
 
         self.removeTask = function(task) {
             if (confirm('Delete ' + task.title() + '?')) self.tasks.remove(task);
         };
+    };
+// view model start!!!!!
+    var viewModel = function() {
 
+        var self = this;
+
+        this.september = ko.observableArray([]);
         self.visible = ko.observable(false);
 
-        self.openPopap = function (item) {
-            item.visible(true);
+        this.openPopap = function (item) {
+            self.visible(true);
+            self.item = item;
         }
 
-        self.closePopap = function (item) {
-            item.visible(false);
+        this.closePopap = function (item) {
+            self.visible(false);
         }
+
+        self.newTaskText = ko.observable();
+        self.newTaskStartTime = ko.observable();
+        self.newTaskEndTime = ko.observable();
+
+        this.addTask = function () {
+            if(self.newTaskText() === undefined || self.newTaskText() === "") return;
+            self.item.tasks.push(new Task({
+                title: self.newTaskText(),
+                time: self.newTaskStartTime(),
+                endTime: self.newTaskEndTime()}));
+            self.newTaskText("");
+        };
+
+// generate month
+        function generateMonth(monthArr, days) {
+          for (var i = 0; i < days; i++) {
+              monthArr.push(new Date(i + 1));
+          };
+        }
+
+        generateMonth(this.september, 30);
     };
 
-    var viewModel = {
-            september: [],
-            generateMonth: function (monthArr, days) {
-              for (var i = 0; i < days; i++) {
-                  monthArr.push(new Date(i + 1));
-              };
-            }
-    };
-
-    viewModel.generateMonth(viewModel.september, 30);
-    ko.applyBindings(viewModel);
+    ko.applyBindings(new viewModel());
 });
 </script>
 </body>
